@@ -31,9 +31,44 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
     Returns
     ----------------
     df
-        Pandas dataframe
+        Pandas dataframe (with the timestamp column parsed)
     """
     from csv_pm_llm_parsing import timest_parser
     return timest_parser.apply_timest_parser(df, timest_column=timest_column, max_head_n=max_head_n,
+                                             max_retry=max_retry, openai_api_url=openai_api_url,
+                                             openai_api_key=openai_api_key, openai_model=openai_model)
+
+
+def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_bytes: int = 2048,
+                        max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
+                        openai_api_key: Optional[str] = None,
+                        openai_model: Optional[str] = None) -> pd.DataFrame:
+    """
+    Detects the separator and quotechar in the provided file using LLMs.
+
+    Parameters
+    ----------------
+    file_path
+        Path to the file
+    input_encoding
+        Encoding of the file (default: utf-8)
+    read_bytes
+        Number of bytes that should be initially considered
+    max_retry
+        Maximum number of retries upon failure
+    openai_api_url
+        API URL (like https://api.openai.com/v1 or http://127.0.0.1:11434/v1 )
+    openai_api_key
+        API key
+    openai_model
+        OpenAI model
+
+    Returns
+    ----------------
+    df
+        Pandas dataframe
+    """
+    from csv_pm_llm_parsing import sep_detection
+    return sep_detection.detect_sep_and_load(file_path, input_encoding=input_encoding, read_bytes=read_bytes,
                                              max_retry=max_retry, openai_api_url=openai_api_url,
                                              openai_api_key=openai_api_key, openai_model=openai_model)

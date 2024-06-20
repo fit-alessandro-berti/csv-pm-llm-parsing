@@ -33,7 +33,7 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
     Returns
     ----------------
     df
-        Pandas dataframe
+        Pandas dataframe (with the timestamp column parsed)
     """
     df[timest_column] = df[timest_column].astype(str).apply(lambda x: x.strip())
     head_values = list(df[timest_column].head(min(len(df), max_head_n)))
@@ -46,7 +46,8 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
     for i in range(max_retry):
         try:
             proposed_format = util.get_json(
-                util.openai_inquiry(prompt.encode('utf-8', errors='ignore').decode('utf-8'), openai_api_url=openai_api_url, openai_api_key=openai_api_key,
+                util.openai_inquiry(prompt.encode('utf-8', errors='ignore').decode('utf-8'),
+                                    openai_api_url=openai_api_url, openai_api_key=openai_api_key,
                                     openai_model=openai_model))["format"]
             df[timest_column] = pd.to_datetime(df[timest_column], format=proposed_format)
             parsed = True
