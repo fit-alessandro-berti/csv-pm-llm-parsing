@@ -1,12 +1,14 @@
 import pandas as pd
 from csv_pm_llm_parsing import constants, meta
 from typing import Optional, Union, Dict
+import sys
 
 
 def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp", max_head_n: int = 10,
                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
                         openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None, return_timest_format: bool = False) -> Union[pd.DataFrame, Dict[str, str]]:
+                        openai_model: Optional[str] = None, return_timest_format: bool = False) -> Union[
+    pd.DataFrame, Dict[str, str]]:
     """
     Automatically detects the format of the timestamp in the specified column using LLMs.
     The Pandas dataframe's column is then parsed using the given format.
@@ -45,7 +47,8 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
 def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_bytes: int = 2048,
                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
                         openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None, return_detected_sep: bool = False) -> Union[pd.DataFrame, Dict[str, str]]:
+                        openai_model: Optional[str] = None, return_detected_sep: bool = False) -> Union[
+    pd.DataFrame, Dict[str, str]]:
     """
     Detects the separator and quotechar in the provided file using LLMs.
 
@@ -113,3 +116,75 @@ def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constant
                                                                  openai_api_key=openai_api_key,
                                                                  openai_model=openai_model,
                                                                  return_suggestions=return_suggestions)
+
+
+def __parse_bytes(file_path: str, n_bytes: int) -> str:
+    """
+    Parses the specific number of bytes from the file to retrieve the encoding
+    (using the 'chardet' package)
+
+    Parameters
+    --------------
+    file_path
+        Path to the CSV file
+    n_bytes
+        Number of bytes to decide the encoding
+
+    Returns
+    --------------
+    encoding
+        Encoding
+    """
+    import chardet
+
+    F = open(file_path, "rb")
+    byte_content = F.read(n_bytes)
+    F.close()
+
+    result = chardet.detect(byte_content)
+    encoding = result['encoding']
+
+    F = open(file_path, "r", encoding=encoding)
+    F.read()
+    F.close()
+
+    return encoding
+
+
+def full_parse_csv_for_pm(file_path: str, openai_api_url: Optional[str] = None,
+                          openai_api_key: Optional[str] = None,
+                          openai_model: Optional[str] = None) -> pd.DataFrame:
+    """
+    Starting from the specified path, reads the CSV in a process-mining-ready format.
+
+    Parameters
+    ---------------
+    file_path
+        Path to the CSV file
+    openai_api_url
+        API URL (like https://api.openai.com/v1 or http://127.0.0.1:11434/v1 )
+    openai_api_key
+        API key
+    openai_model
+        OpenAI model
+
+    Returns
+    ---------------
+    dataframe
+        Pandas dataframe
+    """
+    try:
+        encoding = __parse_bytes(file_path, 2048)
+    except:
+        encoding = __parse_bytes(file_path, sys.maxsize)
+
+    dataframe = detect_sep_and_load(file_path, input_encoding=encoding, openai_api_url=openai_api_url,
+                                    openai_api_key=openai_api_key, openai_model=openai_model)
+
+    dataframe = detect_caseid_activity_timestamp(dataframe, openai_api_url=openai_api_url,
+                                                 openai_api_key=openai_api_key, openai_model=openai_model)
+
+    dataframe = apply_timest_parser(dataframe, "time:timestamp", openai_api_url=openai_api_url,
+                                    openai_api_key=openai_api_key, openai_model=openai_model)
+
+    return dataframe
