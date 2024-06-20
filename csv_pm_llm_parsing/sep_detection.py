@@ -8,7 +8,7 @@ import time
 def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_bytes: int = 2048,
                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
                         openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None, return_detected_sep: bool = False) -> Union[pd.DataFrame, Dict[str, str]]:
+                        openai_model: Optional[str] = None, return_detected_sep: bool = False, debug: bool = False) -> Union[pd.DataFrame, Dict[str, str]]:
     """
     Detects the separator and quotechar in the provided file using LLMs.
 
@@ -30,6 +30,8 @@ def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_byte
         OpenAI model
     return_detected_sep
         (bool) Returns the detected separator and quotechar, instead of the Pandas dataframe
+    debug
+        (bool) Prints additional debug information
 
     Returns
     ----------------
@@ -54,6 +56,8 @@ def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_byte
             format['sep']
             format['quotechar']
 
+            if debug:
+                print(format)
             if return_detected_sep:
                 return format
 

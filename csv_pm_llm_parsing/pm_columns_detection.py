@@ -7,7 +7,7 @@ import io, traceback, time
 def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constants.MAX_RETRY,
                                      openai_api_url: Optional[str] = None,
                                      openai_api_key: Optional[str] = None,
-                                     openai_model: Optional[str] = None, return_suggestions: bool = False) -> Union[
+                                     openai_model: Optional[str] = None, return_suggestions: bool = False, debug: bool = False) -> Union[
     pd.DataFrame, Dict[str, str]]:
     """
     Detects automatically the columns to use as case identifier, activity, and timestamp in the provided dataframe.
@@ -26,6 +26,8 @@ def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constant
         OpenAI model
     return_suggestions
         (bool) Return the suggestion (dictionary) instead of the dataframe
+    debug
+        (bool) Prints additional debug information
 
     Returns
     ----------------
@@ -53,6 +55,8 @@ def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constant
             df[suggestions['timestamp']]
             suggested = True
 
+            if debug:
+                print(suggestions)
             if return_suggestions:
                 return suggestions
 

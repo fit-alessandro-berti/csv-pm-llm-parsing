@@ -7,7 +7,7 @@ import sys
 def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp", max_head_n: int = 10,
                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
                         openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None, return_timest_format: bool = False) -> Union[
+                        openai_model: Optional[str] = None, return_timest_format: bool = False, debug: bool = False) -> Union[
     pd.DataFrame, Dict[str, str]]:
     """
     Automatically detects the format of the timestamp in the specified column using LLMs.
@@ -31,6 +31,8 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
         OpenAI model
     return_timest_format
         (bool) Returns the timestamp format (instead of the transformed dataframe)
+    debug
+        (bool) Prints additional debug information
 
     Returns
     ----------------
@@ -41,13 +43,13 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
     return timest_parser.apply_timest_parser(df, timest_column=timest_column, max_head_n=max_head_n,
                                              max_retry=max_retry, openai_api_url=openai_api_url,
                                              openai_api_key=openai_api_key, openai_model=openai_model,
-                                             return_timest_format=return_timest_format)
+                                             return_timest_format=return_timest_format, debug=debug)
 
 
 def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_bytes: int = 2048,
                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
                         openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None, return_detected_sep: bool = False) -> Union[
+                        openai_model: Optional[str] = None, return_detected_sep: bool = False, debug: bool = False) -> Union[
     pd.DataFrame, Dict[str, str]]:
     """
     Detects the separator and quotechar in the provided file using LLMs.
@@ -70,6 +72,8 @@ def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_byte
         OpenAI model
     return_detected_sep
         (bool) Returns the detected separator and quotechar, instead of the Pandas dataframe
+    debug
+        (bool) Prints additional debug information
 
     Returns
     ----------------
@@ -80,13 +84,13 @@ def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_byte
     return sep_detection.detect_sep_and_load(file_path, input_encoding=input_encoding, read_bytes=read_bytes,
                                              max_retry=max_retry, openai_api_url=openai_api_url,
                                              openai_api_key=openai_api_key, openai_model=openai_model,
-                                             return_detected_sep=return_detected_sep)
+                                             return_detected_sep=return_detected_sep, debug=debug)
 
 
 def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constants.MAX_RETRY,
                                      openai_api_url: Optional[str] = None,
                                      openai_api_key: Optional[str] = None,
-                                     openai_model: Optional[str] = None, return_suggestions: bool = False) -> Union[
+                                     openai_model: Optional[str] = None, return_suggestions: bool = False, debug: bool = False) -> Union[
     pd.DataFrame, Dict[str, str]]:
     """
     Detects automatically the columns to use as case identifier, activity, and timestamp in the provided dataframe.
@@ -105,6 +109,8 @@ def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constant
         OpenAI model
     return_suggestions
         (bool) Return the suggestion (dictionary) instead of the dataframe
+    debug
+        (bool) Prints additional debug information
 
     Returns
     ----------------
@@ -115,7 +121,8 @@ def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constant
     return pm_columns_detection.detect_caseid_activity_timestamp(df, max_retry=max_retry, openai_api_url=openai_api_url,
                                                                  openai_api_key=openai_api_key,
                                                                  openai_model=openai_model,
-                                                                 return_suggestions=return_suggestions)
+                                                                 return_suggestions=return_suggestions,
+                                                                 debug=debug)
 
 
 def __parse_bytes(file_path: str, n_bytes: int) -> str:
@@ -153,7 +160,7 @@ def __parse_bytes(file_path: str, n_bytes: int) -> str:
 
 def full_parse_csv_for_pm(file_path: str, openai_api_url: Optional[str] = None,
                           openai_api_key: Optional[str] = None,
-                          openai_model: Optional[str] = None) -> pd.DataFrame:
+                          openai_model: Optional[str] = None, debug: bool = False) -> pd.DataFrame:
     """
     Starting from the specified path, reads the CSV in a process-mining-ready format.
 
@@ -167,6 +174,8 @@ def full_parse_csv_for_pm(file_path: str, openai_api_url: Optional[str] = None,
         API key
     openai_model
         OpenAI model
+    debug
+        (bool) Prints additional debug information
 
     Returns
     ---------------
@@ -178,17 +187,20 @@ def full_parse_csv_for_pm(file_path: str, openai_api_url: Optional[str] = None,
     except:
         encoding = __parse_bytes(file_path, sys.maxsize)
 
+    if debug:
+        print(encoding)
+    
     dataframe = detect_sep_and_load(file_path, input_encoding=encoding, openai_api_url=openai_api_url,
-                                    openai_api_key=openai_api_key, openai_model=openai_model)
+                                    openai_api_key=openai_api_key, openai_model=openai_model, debug=debug)
 
     dataframe = detect_caseid_activity_timestamp(dataframe, openai_api_url=openai_api_url,
-                                                 openai_api_key=openai_api_key, openai_model=openai_model)
+                                                 openai_api_key=openai_api_key, openai_model=openai_model, debug=debug)
     dataframe = dataframe.dropna(subset=["case:concept:name", "concept:name", "time:timestamp"])
     dataframe["case:concept:name"] = dataframe["case:concept:name"].astype(str)
     dataframe["concept:name"] = dataframe["concept:name"].astype(str)
 
     dataframe = apply_timest_parser(dataframe, "time:timestamp", openai_api_url=openai_api_url,
-                                    openai_api_key=openai_api_key, openai_model=openai_model)
+                                    openai_api_key=openai_api_key, openai_model=openai_model, debug=debug)
 
     dataframe["@@index"] = dataframe.index
     dataframe.sort_values(["case:concept:name", "time:timestamp", "@@index"])
