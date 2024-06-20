@@ -183,8 +183,14 @@ def full_parse_csv_for_pm(file_path: str, openai_api_url: Optional[str] = None,
 
     dataframe = detect_caseid_activity_timestamp(dataframe, openai_api_url=openai_api_url,
                                                  openai_api_key=openai_api_key, openai_model=openai_model)
+    dataframe = dataframe.dropna(subset=["case:concept:name", "concept:name", "time:timestamp"])
+    dataframe["case:concept:name"] = dataframe["case:concept:name"].astype(str)
+    dataframe["concept:name"] = dataframe["concept:name"].astype(str)
 
     dataframe = apply_timest_parser(dataframe, "time:timestamp", openai_api_url=openai_api_url,
                                     openai_api_key=openai_api_key, openai_model=openai_model)
+
+    dataframe["@@index"] = dataframe.index
+    dataframe.sort_values(["case:concept:name", "time:timestamp", "@@index"])
 
     return dataframe
