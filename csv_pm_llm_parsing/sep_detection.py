@@ -1,6 +1,6 @@
 from csv_pm_llm_parsing import constants, util
 import pandas as pd
-from typing import Optional
+from typing import Optional, Union, Dict
 import traceback
 import time
 
@@ -8,7 +8,7 @@ import time
 def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_bytes: int = 2048,
                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
                         openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None) -> pd.DataFrame:
+                        openai_model: Optional[str] = None, return_detected_sep: bool = False) -> Union[pd.DataFrame, Dict[str, str]]:
     """
     Detects the separator and quotechar in the provided file using LLMs.
 
@@ -28,6 +28,8 @@ def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_byte
         API key
     openai_model
         OpenAI model
+    return_detected_sep
+        (bool) Returns the detected separator and quotechar, instead of the Pandas dataframe
 
     Returns
     ----------------
@@ -49,6 +51,12 @@ def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_byte
             format = util.get_json(util.openai_inquiry(prompt.encode('utf-8', errors='ignore').decode('utf-8'),
                                                        openai_api_url=openai_api_url, openai_api_key=openai_api_key,
                                                        openai_model=openai_model))
+            format['sep']
+            format['quotechar']
+
+            if return_detected_sep:
+                return format
+
             dataframe = pd.read_csv(file_path, encoding=input_encoding, sep=format['sep'],
                                     quotechar=format['quotechar'])
             break

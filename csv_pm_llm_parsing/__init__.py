@@ -6,7 +6,7 @@ from typing import Optional, Union, Dict
 def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp", max_head_n: int = 10,
                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
                         openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None) -> pd.DataFrame:
+                        openai_model: Optional[str] = None, return_timest_format: bool = False) -> Union[pd.DataFrame, Dict[str, str]]:
     """
     Automatically detects the format of the timestamp in the specified column using LLMs.
     The Pandas dataframe's column is then parsed using the given format.
@@ -27,6 +27,8 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
         API key
     openai_model
         OpenAI model
+    return_timest_format
+        (bool) Returns the timestamp format (instead of the transformed dataframe)
 
     Returns
     ----------------
@@ -36,13 +38,14 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
     from csv_pm_llm_parsing import timest_parser
     return timest_parser.apply_timest_parser(df, timest_column=timest_column, max_head_n=max_head_n,
                                              max_retry=max_retry, openai_api_url=openai_api_url,
-                                             openai_api_key=openai_api_key, openai_model=openai_model)
+                                             openai_api_key=openai_api_key, openai_model=openai_model,
+                                             return_timest_format=return_timest_format)
 
 
 def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_bytes: int = 2048,
                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
                         openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None) -> pd.DataFrame:
+                        openai_model: Optional[str] = None, return_detected_sep: bool = False) -> Union[pd.DataFrame, Dict[str, str]]:
     """
     Detects the separator and quotechar in the provided file using LLMs.
 
@@ -62,6 +65,8 @@ def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_byte
         API key
     openai_model
         OpenAI model
+    return_detected_sep
+        (bool) Returns the detected separator and quotechar, instead of the Pandas dataframe
 
     Returns
     ----------------
@@ -71,7 +76,8 @@ def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_byte
     from csv_pm_llm_parsing import sep_detection
     return sep_detection.detect_sep_and_load(file_path, input_encoding=input_encoding, read_bytes=read_bytes,
                                              max_retry=max_retry, openai_api_url=openai_api_url,
-                                             openai_api_key=openai_api_key, openai_model=openai_model)
+                                             openai_api_key=openai_api_key, openai_model=openai_model,
+                                             return_detected_sep=return_detected_sep)
 
 
 def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constants.MAX_RETRY,
@@ -94,6 +100,8 @@ def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constant
         API key
     openai_model
         OpenAI model
+    return_suggestions
+        (bool) Return the suggestion (dictionary) instead of the dataframe
 
     Returns
     ----------------

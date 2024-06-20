@@ -2,13 +2,13 @@ import pandas as pd
 from csv_pm_llm_parsing import constants, util
 import traceback
 import time
-from typing import Optional
+from typing import Optional, Union, Dict
 
 
 def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp", max_head_n: int = 10,
                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
                         openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None) -> pd.DataFrame:
+                        openai_model: Optional[str] = None, return_timest_format: bool = False) -> Union[pd.DataFrame, Dict[str, str]]:
     """
     Automatically detects the format of the timestamp in the specified column using LLMs.
     The Pandas dataframe's column is then parsed using the given format.
@@ -29,6 +29,8 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
         API key
     openai_model
         OpenAI model
+    return_timest_format
+        (bool) Returns the timestamp format (instead of the transformed dataframe)
 
     Returns
     ----------------
@@ -49,6 +51,10 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
                 util.openai_inquiry(prompt.encode('utf-8', errors='ignore').decode('utf-8'),
                                     openai_api_url=openai_api_url, openai_api_key=openai_api_key,
                                     openai_model=openai_model))["format"]
+
+            if return_timest_format:
+                return proposed_format
+
             df[timest_column] = pd.to_datetime(df[timest_column], format=proposed_format)
             parsed = True
             break

@@ -24,6 +24,8 @@ def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constant
         API key
     openai_model
         OpenAI model
+    return_suggestions
+        (bool) Return the suggestion (dictionary) instead of the dataframe
 
     Returns
     ----------------
