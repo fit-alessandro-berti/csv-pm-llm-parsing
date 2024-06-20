@@ -1,0 +1,7 @@
+"case_code","task_name","timestamp_completed","team_member","resource_cost"
+"D1001","Begin","2023-11-25T09:40:00","Paul","110"
+"D1001","Review","2023-11-25T10:10:00","Quinn","70"
+"D1001","End","2023-11-25T11:00:00","Rachel","130"
+"D1002","Begin","2023-11-26T09:45:00","Paul","110"
+"D1002","Review","2023-11-26T10:15:00","Quinn","70"
+"D1002","End","2023-11-26T11:05:00","Rachel","130"

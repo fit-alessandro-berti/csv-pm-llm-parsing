@@ -1,0 +1,7 @@
+"case_key","operation","timestamp_finalized","staff","work_hours"
+"C001","Launch","2023-10-18T08:25:00","Michael","2.5"
+"C001","Analyze","2023-10-18T10:55:00","Nancy","1"
+"C001","Finish","2023-10-18T11:55:00","Oscar","3"
+"C002","Launch","2023-10-19T08:30:00","Michael","2.5"
+"C002","Analyze","2023-10-19T11:00:00","Nancy","1"
+"C002","Finish","2023-10-19T12:00:00","Oscar","3"

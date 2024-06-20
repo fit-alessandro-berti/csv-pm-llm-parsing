@@ -1,0 +1,7 @@
+"case_identifier","action","completion_datetime","employee","expense"
+"3001","Open","2023-08-05T10:20:00","Dave","120"
+"3001","Evaluate","2023-08-05T10:50:00","Eva","60"
+"3001","Close","2023-08-05T11:40:00","Frank","180"
+"3002","Open","2023-08-06T10:25:00","Dave","120"
+"3002","Evaluate","2023-08-06T10:55:00","Eva","60"
+"3002","Close","2023-08-06T11:45:00","Frank","180"

@@ -1,0 +1,7 @@
+"process_id","event","timestamp_done","operator","cost_estimate"
+"5001","Initiate","2023-09-12T14:05:00","George","150"
+"5001","Assess","2023-09-12T14:35:00","Helen","80"
+"5001","Complete","2023-09-12T15:10:00","Ian","220"
+"5002","Initiate","2023-09-13T14:10:00","George","150"
+"5002","Assess","2023-09-13T14:40:00","Helen","80"
+"5002","Complete","2023-09-13T15:15:00","Ian","220"

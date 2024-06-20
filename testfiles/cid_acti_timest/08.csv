@@ -1,0 +1,7 @@
+"case_tag","process_step","time_of_completion","personnel","estimated_duration"
+"E9001","Kickoff","2023-12-01T13:15:00","Steve","1.5"
+"E9001","Evaluate","2023-12-01T14:45:00","Tom","1.2"
+"E9001","Wrap up","2023-12-01T15:30:00","Uma","2.3"
+"E9002","Kickoff","2023-12-02T13:20:00","Steve","1.5"
+"E9002","Evaluate","2023-12-02T14:50:00","Tom","1.2"
+"E9002","Wrap up","2023-12-02T15:35:00","Uma","2.3"

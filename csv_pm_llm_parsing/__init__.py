@@ -1,6 +1,6 @@
 import pandas as pd
 from csv_pm_llm_parsing import constants, meta
-from typing import Optional
+from typing import Optional, Union, Dict
 
 
 def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp", max_head_n: int = 10,
@@ -72,3 +72,12 @@ def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_byte
     return sep_detection.detect_sep_and_load(file_path, input_encoding=input_encoding, read_bytes=read_bytes,
                                              max_retry=max_retry, openai_api_url=openai_api_url,
                                              openai_api_key=openai_api_key, openai_model=openai_model)
+
+
+def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constants.MAX_RETRY,
+                                     openai_api_url: Optional[str] = None,
+                                     openai_api_key: Optional[str] = None,
+                                     openai_model: Optional[str] = None, return_suggestions: bool = False) -> Union[
+    pd.DataFrame, Dict[str, str]]:
+    from csv_pm_llm_parsing import pm_columns_detection
+    return pm_columns_detection.detect_caseid_activity_timestamp(df, max_retry=max_retry, openai_api_url=openai_api_url, openai_api_key=openai_api_key, openai_model=openai_model, return_suggestions=return_suggestions)

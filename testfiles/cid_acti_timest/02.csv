@@ -1,0 +1,7 @@
+"case_number","activity_name","end_timestamp","department","duration"
+"101","Initiate","2023-06-15T07:45:00","Sales","15"
+"101","Review","2023-06-15T08:00:00","Quality","30"
+"101","Approve","2023-06-15T08:30:00","Manager","45"
+"102","Initiate","2023-06-16T07:50:00","Sales","15"
+"102","Review","2023-06-16T08:05:00","Quality","30"
+"102","Approve","2023-06-16T08:35:00","Manager","45"
