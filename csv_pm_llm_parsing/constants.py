@@ -9,7 +9,7 @@ if os.path.exists("openai_api_url.txt"):
 if os.path.exists("openai_api_key.txt"):
     OPENAI_API_KEY = open("openai_api_key.txt", "r").read().strip()
 
-if OPENAI_API_KEY or not OPENAI_API_KEY:
+if OPENAI_API_KEY is None or not OPENAI_API_KEY:
     raise Exception("Please check your environment variables before using CSV-PM-LLM-parsing: OPENAI_API_KEY is not defined!")
 
 if OPENAI_API_URL.endswith("/"):
