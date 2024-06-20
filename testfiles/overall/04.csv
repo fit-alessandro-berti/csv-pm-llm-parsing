@@ -1,0 +1,7 @@
+Case_Key	Operation	Completion_Timestamp	Team_Member	Status
+1	Begin	1676908800	Member1	Initiated
+1	Process	1676916000	Member2	Ongoing
+1	Finish	1676926800	Member1	Completed
+2	Begin	1676995200	Member3	Initiated
+2	Process	1677002400	Member4	Ongoing
+2	Finish	1677013200	Member3	Completed

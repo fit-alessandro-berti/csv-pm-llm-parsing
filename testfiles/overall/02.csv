@@ -1,0 +1,7 @@
+Case Identifier,Action,Timestamp Completed,Duration (min),Outcome
+1,Initiate,20-06-2023 08:00:00,30,Success
+1,Execute,20-06-2023 08:30:00,120,In Progress
+1,Finish,20-06-2023 10:30:00,45,Success
+2,Initiate,21-06-2023 09:00:00,25,Success
+2,Execute,21-06-2023 09:25:00,130,In Progress
+2,Finish,21-06-2023 11:35:00,50,Success
