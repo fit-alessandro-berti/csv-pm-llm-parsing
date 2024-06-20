@@ -1,7 +1,7 @@
 import pandas as pd
 from csv_pm_llm_parsing import constants, meta
 from typing import Optional, Union, Dict
-import sys
+import sys, traceback
 
 
 def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp", max_head_n: int = 10,
@@ -190,19 +190,25 @@ def full_parse_csv_for_pm(file_path: str, openai_api_url: Optional[str] = None,
     if debug:
         print(encoding)
 
-    dataframe = detect_sep_and_load(file_path, input_encoding=encoding, openai_api_url=openai_api_url,
-                                    openai_api_key=openai_api_key, openai_model=openai_model, debug=debug)
+    for i in range(constants.MAX_RETRY):
+        try:
+            dataframe = detect_sep_and_load(file_path, input_encoding=encoding, openai_api_url=openai_api_url,
+                                            openai_api_key=openai_api_key, openai_model=openai_model, debug=debug, max_retry=1)
 
-    dataframe = detect_caseid_activity_timestamp(dataframe, openai_api_url=openai_api_url,
-                                                 openai_api_key=openai_api_key, openai_model=openai_model, debug=debug)
-    dataframe = dataframe.dropna(subset=["case:concept:name", "concept:name", "time:timestamp"])
-    dataframe["case:concept:name"] = dataframe["case:concept:name"].astype(str)
-    dataframe["concept:name"] = dataframe["concept:name"].astype(str)
+            dataframe = detect_caseid_activity_timestamp(dataframe, openai_api_url=openai_api_url,
+                                                         openai_api_key=openai_api_key, openai_model=openai_model, debug=debug, max_retry=1)
+            dataframe = dataframe.dropna(subset=["case:concept:name", "concept:name", "time:timestamp"])
+            dataframe["case:concept:name"] = dataframe["case:concept:name"].astype(str)
+            dataframe["concept:name"] = dataframe["concept:name"].astype(str)
 
-    dataframe = apply_timest_parser(dataframe, "time:timestamp", openai_api_url=openai_api_url,
-                                    openai_api_key=openai_api_key, openai_model=openai_model, debug=debug)
+            dataframe = apply_timest_parser(dataframe, "time:timestamp", openai_api_url=openai_api_url,
+                                            openai_api_key=openai_api_key, openai_model=openai_model, debug=debug, max_retry=2)
 
-    dataframe["@@index"] = dataframe.index
-    dataframe.sort_values(["case:concept:name", "time:timestamp", "@@index"])
+            dataframe["@@index"] = dataframe.index
+            dataframe.sort_values(["case:concept:name", "time:timestamp", "@@index"])
+
+            break
+        except:
+            traceback.print_exc()
 
     return dataframe

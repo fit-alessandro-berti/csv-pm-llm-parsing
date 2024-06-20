@@ -6,7 +6,7 @@ import traceback
 DEBUG = True
 
 def execute_script():
-    path = "../testfiles/timest_format"
+    path = "../testfiles/overall"
 
     files = os.listdir(path)
 
