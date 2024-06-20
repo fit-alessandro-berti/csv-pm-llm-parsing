@@ -35,6 +35,7 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
     df
         Pandas dataframe
     """
+    df[timest_column] = df[timest_column].astype(str).apply(lambda x: x.strip())
     head_values = list(df[timest_column].head(min(len(df), max_head_n)))
 
     prompt = "Given the following list of timestamps: " + str(head_values)
