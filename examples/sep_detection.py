@@ -5,7 +5,7 @@ import traceback
 
 
 def execute_script():
-    path = "../testfiles/timest_format"
+    path = "../testfiles/sep_detection"
 
     files = os.listdir(path)
 
@@ -14,13 +14,12 @@ def execute_script():
             full_path = os.path.join(path, file)
 
             try:
-                dataframe = pd.read_csv(full_path, encoding="utf-8", sep=",", quotechar="\"")
-                dataframe = csv_pm_llm_parsing.apply_timest_parser(dataframe, timest_column="time:timestamp", max_retry=1)
+                dataframe = csv_pm_llm_parsing.detect_sep_and_load(full_path, input_encoding="utf-8")
                 dataframe.info()
                 print(dataframe)
             except:
                 traceback.print_exc()
-                print("failed parsing for", full_path)
+                print("failed detection for", full_path)
 
 
 if __name__ == "__main__":
