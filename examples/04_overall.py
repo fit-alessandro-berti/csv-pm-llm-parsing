@@ -3,6 +3,8 @@ import csv_pm_llm_parsing
 import traceback
 
 
+DEBUG = True
+
 def execute_script():
     path = "../testfiles/timest_format"
 
@@ -11,9 +13,10 @@ def execute_script():
     for file in files:
         if file.endswith("csv"):
             full_path = os.path.join(path, file)
+            print(full_path)
 
             try:
-                dataframe = csv_pm_llm_parsing.full_parse_csv_for_pm(full_path)
+                dataframe = csv_pm_llm_parsing.full_parse_csv_for_pm(full_path, debug=DEBUG)
                 dataframe.info()
                 print(dataframe)
             except:

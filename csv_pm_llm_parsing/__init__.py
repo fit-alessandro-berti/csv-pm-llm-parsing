@@ -189,7 +189,7 @@ def full_parse_csv_for_pm(file_path: str, openai_api_url: Optional[str] = None,
 
     if debug:
         print(encoding)
-    
+
     dataframe = detect_sep_and_load(file_path, input_encoding=encoding, openai_api_url=openai_api_url,
                                     openai_api_key=openai_api_key, openai_model=openai_model, debug=debug)
 
