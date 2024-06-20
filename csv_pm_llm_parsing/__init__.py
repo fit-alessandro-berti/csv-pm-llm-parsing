@@ -79,5 +79,29 @@ def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constant
                                      openai_api_key: Optional[str] = None,
                                      openai_model: Optional[str] = None, return_suggestions: bool = False) -> Union[
     pd.DataFrame, Dict[str, str]]:
+    """
+    Detects automatically the columns to use as case identifier, activity, and timestamp in the provided dataframe.
+
+    Parameters
+    -----------------
+    df
+        Pandas dataframe
+    max_retry
+        Maximum number of retries upon failure
+    openai_api_url
+        API URL (like https://api.openai.com/v1 or http://127.0.0.1:11434/v1 )
+    openai_api_key
+        API key
+    openai_model
+        OpenAI model
+
+    Returns
+    ----------------
+    df
+        Pandas dataframe with standard column names (i.e., in pm4py, 'case:concept:name' for the case ID, 'concept:name' for the activity, and 'time:timestamp' for the timestamp).
+    """
     from csv_pm_llm_parsing import pm_columns_detection
-    return pm_columns_detection.detect_caseid_activity_timestamp(df, max_retry=max_retry, openai_api_url=openai_api_url, openai_api_key=openai_api_key, openai_model=openai_model, return_suggestions=return_suggestions)
+    return pm_columns_detection.detect_caseid_activity_timestamp(df, max_retry=max_retry, openai_api_url=openai_api_url,
+                                                                 openai_api_key=openai_api_key,
+                                                                 openai_model=openai_model,
+                                                                 return_suggestions=return_suggestions)

@@ -9,13 +9,35 @@ def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constant
                                      openai_api_key: Optional[str] = None,
                                      openai_model: Optional[str] = None, return_suggestions: bool = False) -> Union[
     pd.DataFrame, Dict[str, str]]:
+    """
+    Detects automatically the columns to use as case identifier, activity, and timestamp in the provided dataframe.
+
+    Parameters
+    -----------------
+    df
+        Pandas dataframe
+    max_retry
+        Maximum number of retries upon failure
+    openai_api_url
+        API URL (like https://api.openai.com/v1 or http://127.0.0.1:11434/v1 )
+    openai_api_key
+        API key
+    openai_model
+        OpenAI model
+
+    Returns
+    ----------------
+    df
+        Pandas dataframe with standard column names (i.e., in pm4py, 'case:concept:name' for the case ID, 'concept:name' for the activity, and 'time:timestamp' for the timestamp).
+    """
     buf = io.StringIO()
     df.info(buf=buf)
     s = buf.getvalue()
     prompt = "Given the dataframe with the following columns:\n\n"
     prompt += s
     prompt += "\n\nCan you suggest some columns for the case identifier, activity, and completion timestamp?\n"
-    prompt += "Please produce a JSON containing as keys: 'caseid', 'activity', 'timestamp'"
+    prompt += "Please produce a JSON containing as keys: 'caseid', 'activity', 'timestamp'\n"
+    prompt += "Each key should be associated with the name of the column."
 
     suggested = False
     for i in range(max_retry):
@@ -28,6 +50,10 @@ def detect_caseid_activity_timestamp(df: pd.DataFrame, max_retry: int = constant
             df[suggestions['activity']]
             df[suggestions['timestamp']]
             suggested = True
+
+            if return_suggestions:
+                return suggestions
+
             df['case:concept:name'] = df[suggestions['caseid']]
             df['concept:name'] = df[suggestions['activity']]
             df['time:timestamp'] = df[suggestions['timestamp']]
