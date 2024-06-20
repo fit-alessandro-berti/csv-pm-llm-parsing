@@ -1,0 +1,6 @@
+case_id,activity,timestamp,resource,cost
+1,Start,2023-01-01 00:00:00,Alice,467
+2,Check,2023-01-02 00:00:00,Bob,121
+3,Approve,2023-01-03 00:00:00,Charlie,379
+4,Reject,2023-01-04 00:00:00,Dave,387
+5,Complete,2023-01-05 00:00:00,Eve,105
