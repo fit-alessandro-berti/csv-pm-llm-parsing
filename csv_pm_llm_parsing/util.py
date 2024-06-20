@@ -6,6 +6,25 @@ import traceback
 
 def openai_inquiry(prompt: str, openai_api_url: Optional[str] = None, openai_api_key: Optional[str] = None,
                    openai_model: Optional[str] = None) -> str:
+    """
+    Sends the prompt to the OpenAI's APIs, obtaining the response
+
+    Parameters
+    ------------------
+    prompt
+        Prompt
+    openai_api_url
+        OpenAI API url
+    openai_api_key
+        OpenAI API key
+    openai_model
+        OpenAI model
+
+    Returns
+    -----------------
+    response
+        Response from the APIs
+    """
     if openai_api_url is None:
         openai_api_url = constants.OPENAI_API_URL
 
@@ -48,6 +67,19 @@ def openai_inquiry(prompt: str, openai_api_url: Optional[str] = None, openai_api
 
 
 def get_json(response: str) -> Dict[str, Any]:
+    """
+    Gets the last JSON dictionary contained in the response from the APIs
+
+    Parameters
+    ---------------
+    response
+        Response from the APIs
+
+    Returns
+    ---------------
+    json_dict
+        Last JSON dict
+    """
     try:
         json_str = "{" + response.split("{")[-1].split("}")[0].strip() + "}"
         return json.loads(json_str)
