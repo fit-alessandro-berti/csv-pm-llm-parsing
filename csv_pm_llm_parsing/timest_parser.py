@@ -46,7 +46,7 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
     for i in range(max_retry):
         try:
             proposed_format = util.get_json(
-                util.openai_inquiry(prompt, openai_api_url=openai_api_url, openai_api_key=openai_api_key,
+                util.openai_inquiry(prompt.encode('utf-8', errors='ignore').decode('utf-8'), openai_api_url=openai_api_url, openai_api_key=openai_api_key,
                                     openai_model=openai_model))["format"]
             df[timest_column] = pd.to_datetime(df[timest_column], format=proposed_format)
             parsed = True
