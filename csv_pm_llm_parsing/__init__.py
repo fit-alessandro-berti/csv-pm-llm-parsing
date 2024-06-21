@@ -4,10 +4,10 @@ from typing import Optional, Union, Dict
 import sys, traceback
 
 
-def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp", max_head_n: int = 10,
-                        max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
-                        openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None, return_timest_format: bool = False, debug: bool = False) -> Union[
+def detect_timest_format(df: pd.DataFrame, timest_column: str = "time:timestamp", max_head_n: int = 10,
+                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
+                         openai_api_key: Optional[str] = None,
+                         openai_model: Optional[str] = None, return_timest_format: bool = False, debug: bool = False) -> Union[
     pd.DataFrame, Dict[str, str]]:
     """
     Automatically detects the format of the timestamp in the specified column using LLMs.
@@ -40,16 +40,16 @@ def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp",
         Pandas dataframe (with the timestamp column parsed)
     """
     from csv_pm_llm_parsing import timest_parser
-    return timest_parser.apply_timest_parser(df, timest_column=timest_column, max_head_n=max_head_n,
-                                             max_retry=max_retry, openai_api_url=openai_api_url,
-                                             openai_api_key=openai_api_key, openai_model=openai_model,
-                                             return_timest_format=return_timest_format, debug=debug)
+    return timest_parser.detect_timest_format(df, timest_column=timest_column, max_head_n=max_head_n,
+                                              max_retry=max_retry, openai_api_url=openai_api_url,
+                                              openai_api_key=openai_api_key, openai_model=openai_model,
+                                              return_timest_format=return_timest_format, debug=debug)
 
 
-def detect_sep_and_load(file_path: str, input_encoding: str = "utf-8", read_bytes: int = 2048,
-                        max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
-                        openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None, return_detected_sep: bool = False, debug: bool = False) -> Union[
+def detect_sep_and_quote(file_path: str, input_encoding: str = "utf-8", read_bytes: int = 2048,
+                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
+                         openai_api_key: Optional[str] = None,
+                         openai_model: Optional[str] = None, return_detected_sep: bool = False, debug: bool = False) -> Union[
     pd.DataFrame, Dict[str, str]]:
     """
     Detects the separator and quotechar in the provided file using LLMs.
@@ -192,8 +192,8 @@ def full_parse_csv_for_pm(file_path: str, openai_api_url: Optional[str] = None,
 
     for i in range(constants.MAX_RETRY):
         try:
-            dataframe = detect_sep_and_load(file_path, input_encoding=encoding, openai_api_url=openai_api_url,
-                                            openai_api_key=openai_api_key, openai_model=openai_model, debug=debug, max_retry=1)
+            dataframe = detect_sep_and_quote(file_path, input_encoding=encoding, openai_api_url=openai_api_url,
+                                             openai_api_key=openai_api_key, openai_model=openai_model, debug=debug, max_retry=1)
 
             dataframe = detect_caseid_activity_timestamp(dataframe, openai_api_url=openai_api_url,
                                                          openai_api_key=openai_api_key, openai_model=openai_model, debug=debug, max_retry=1)
@@ -201,8 +201,8 @@ def full_parse_csv_for_pm(file_path: str, openai_api_url: Optional[str] = None,
             dataframe["case:concept:name"] = dataframe["case:concept:name"].astype(str)
             dataframe["concept:name"] = dataframe["concept:name"].astype(str)
 
-            dataframe = apply_timest_parser(dataframe, "time:timestamp", openai_api_url=openai_api_url,
-                                            openai_api_key=openai_api_key, openai_model=openai_model, debug=debug, max_retry=2)
+            dataframe = detect_timest_format(dataframe, "time:timestamp", openai_api_url=openai_api_url,
+                                             openai_api_key=openai_api_key, openai_model=openai_model, debug=debug, max_retry=2)
 
             dataframe["@@index"] = dataframe.index
             dataframe.sort_values(["case:concept:name", "time:timestamp", "@@index"])

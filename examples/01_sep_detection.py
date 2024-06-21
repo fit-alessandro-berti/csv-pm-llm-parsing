@@ -13,7 +13,7 @@ def execute_script():
             full_path = os.path.join(path, file)
 
             try:
-                dataframe = csv_pm_llm_parsing.detect_sep_and_load(full_path, input_encoding="utf-8")
+                dataframe = csv_pm_llm_parsing.detect_sep_and_quote(full_path, input_encoding="utf-8")
                 dataframe.info()
                 print(dataframe)
             except:

@@ -5,10 +5,10 @@ import time
 from typing import Optional, Union, Dict
 
 
-def apply_timest_parser(df: pd.DataFrame, timest_column: str = "time:timestamp", max_head_n: int = 10,
-                        max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
-                        openai_api_key: Optional[str] = None,
-                        openai_model: Optional[str] = None, return_timest_format: bool = False, debug: bool = False) -> Union[pd.DataFrame, Dict[str, str]]:
+def detect_timest_format(df: pd.DataFrame, timest_column: str = "time:timestamp", max_head_n: int = 10,
+                         max_retry: int = constants.MAX_RETRY, openai_api_url: Optional[str] = None,
+                         openai_api_key: Optional[str] = None,
+                         openai_model: Optional[str] = None, return_timest_format: bool = False, debug: bool = False) -> Union[pd.DataFrame, Dict[str, str]]:
     """
     Automatically detects the format of the timestamp in the specified column using LLMs.
     The Pandas dataframe's column is then parsed using the given format.

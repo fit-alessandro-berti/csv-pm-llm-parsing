@@ -15,7 +15,7 @@ def execute_script():
 
             try:
                 dataframe = pd.read_csv(full_path, encoding="utf-8", sep=",", quotechar="\"")
-                dataframe = csv_pm_llm_parsing.apply_timest_parser(dataframe, timest_column="time:timestamp", max_retry=1)
+                dataframe = csv_pm_llm_parsing.detect_timest_format(dataframe, timest_column="time:timestamp", max_retry=1)
                 dataframe.info()
                 print(dataframe)
             except:
